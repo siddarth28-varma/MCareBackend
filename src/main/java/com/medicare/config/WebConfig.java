@@ -2,21 +2,23 @@ package com.medicare.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+    private final String[] allowedOrigins;
+
+    public WebConfig(@Value("${app.cors.allowed-origins}") String[] allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
+    }
+
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOriginPatterns(
-                        "http://localhost:5173",
-                        "http://127.0.0.1:5173",
-                        "https://24eg107f09.netlify.app",
-                        "https://*.netlify.app")
+                .allowedOrigins(allowedOrigins)
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowedHeaders("Authorization", "Content-Type");
     }
 }

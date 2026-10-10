@@ -8,6 +8,7 @@ import com.medicare.repository.PrescriptionRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.time.LocalDateTime;
 
 @RestController
@@ -21,11 +22,13 @@ public class PrescriptionController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('DOCTOR') and @authorization.isAssignedDoctor(#root.args[0], authentication))")
     public Prescription get(@PathVariable Long appointmentId) {
         return prescriptions.findByAppointmentId(appointmentId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Consultation not found."));
     }
 
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('DOCTOR') and @authorization.isAssignedDoctor(#root.args[0], authentication))")
     public Prescription save(@PathVariable Long appointmentId, @RequestBody ConsultationRequest request) {
         Appointment appointment = appointments.findById(appointmentId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found."));
         Prescription record = prescriptions.findByAppointmentId(appointmentId).orElseGet(() -> new Prescription(appointment, request.consultationNotes(), request.prescriptionDetails()));

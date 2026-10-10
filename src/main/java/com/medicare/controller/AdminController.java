@@ -3,10 +3,12 @@ package com.medicare.controller;
 import com.medicare.model.AppointmentStatus;
 import com.medicare.repository.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
     private final PatientRepository patients;
     private final DoctorRepository doctors;
