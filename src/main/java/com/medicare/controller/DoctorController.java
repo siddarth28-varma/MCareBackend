@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +43,7 @@ public class DoctorController {
     }
 
     @GetMapping
-    public List<Doctor> all(@RequestParam(required = false) String specialization) {
+    public List<Doctor> all(@RequestParam(required = false) @Nullable String specialization) {
         return specialization == null || specialization.isBlank() ? doctors.findAll() : doctors.findBySpecializationContainingIgnoreCase(specialization);
     }
 

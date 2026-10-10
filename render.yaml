@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: 24eg107f09-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DB_HOST
+        value: mysql-cc8a4f8-siddubeddatha-bd83.aivencloud.com
+      - key: DB_PORT
+        value: 16143
+      - key: DB_NAME
+        value: defaultdb
+      - key: DB_USERNAME
+        value: avadmin
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSL_MODE
+        value: REQUIRED

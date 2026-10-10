@@ -9,6 +9,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
-        registry.addMapping("/api/**").allowedOrigins("http://localhost:5173", "http://127.0.0.1:5173").allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS");
+        registry.addMapping("/api/**")
+                .allowedOriginPatterns(
+                        "http://localhost:5173",
+                        "http://127.0.0.1:5173",
+                        "https://24eg107f09.netlify.app",
+                        "https://*.netlify.app")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
