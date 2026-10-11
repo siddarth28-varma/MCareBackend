@@ -63,7 +63,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/health").permitAll()
+                        .requestMatchers(request -> request.getMethod().equals(HttpMethod.GET.name())
+                                && request.getRequestURI().equals(request.getContextPath() + "/")).permitAll()
+                        .requestMatchers("/health").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/doctors", "/api/doctors/*", "/api/doctors/*/availability", "/api/doctors/by-user/*").permitAll()
                         .requestMatchers("/api/**").authenticated()
