@@ -31,6 +31,11 @@ public class AuthorizationService {
                 .map(user -> user.getId().equals(userId))).orElse(false);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<Patient> currentPatient(Authentication authentication) {
+        return currentUserId(authentication).flatMap(patients::findByUserId);
+    }
+
     public boolean ownsUser(Long userId, Authentication authentication) {
         return currentUserId(authentication).map(id -> id.equals(userId)).orElse(false);
     }

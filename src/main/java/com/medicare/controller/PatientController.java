@@ -11,17 +11,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 
 import com.medicare.model.Patient;
 import com.medicare.repository.PatientRepository;
 import com.medicare.repository.UserRepository;
+import com.medicare.security.AuthorizationService;
 
 @RestController
 @RequestMapping("/api/patients")
 public class PatientController {
     private final PatientRepository patients;
     private final UserRepository users;
-    public PatientController(PatientRepository patients, UserRepository users) { this.patients = patients; this.users = users; }
+    private final AuthorizationService authorization;
+    public PatientController(PatientRepository patients, UserRepository users, AuthorizationService authorization) {
+        this.patients = patients;
+        this.users = users;
+        this.authorization = authorization;
+    }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -30,6 +37,13 @@ public class PatientController {
     @GetMapping("/by-user/{userId}")
     @PreAuthorize("hasRole('ADMIN') or @authorization.ownsUser(#root.args[0], authentication)")
     public Patient byUser(@PathVariable Long userId) { return patients.findByUserId(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient profile not found.")); }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('PATIENT')")
+    public Patient currentPatient(Authentication authentication) {
+        return authorization.currentPatient(authentication)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient profile not found."));
+    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @authorization.ownsPatient(#root.args[0], authentication)")

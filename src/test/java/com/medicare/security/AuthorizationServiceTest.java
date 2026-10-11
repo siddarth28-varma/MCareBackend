@@ -1,6 +1,7 @@
 package com.medicare.security;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +36,15 @@ class AuthorizationServiceTest {
 
         assertTrue(authorization.ownsPatient(12L, authentication("42")));
         assertFalse(authorization.ownsPatient(12L, authentication("43")));
+    }
+
+    @Test
+    void currentPatientUsesTheAuthenticatedUserId() {
+        AuthorizationService authorization = new AuthorizationService(patients, doctors, appointments);
+        Patient patient = org.mockito.Mockito.mock(Patient.class);
+        when(patients.findByUserId(42L)).thenReturn(Optional.of(patient));
+
+        assertSame(patient, authorization.currentPatient(authentication("42")).orElseThrow());
     }
 
     private JwtAuthenticationToken authentication(String subject) {
