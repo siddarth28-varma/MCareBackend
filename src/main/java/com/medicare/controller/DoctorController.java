@@ -57,7 +57,7 @@ public class DoctorController {
     public Doctor one(@PathVariable Long id) { return doctors.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Doctor not found.")); }
 
     @GetMapping("/by-user/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or @authorization.ownsUser(#root.args[0], authentication)")
+    @PreAuthorize("hasRole('ADMIN') or @authorization.ownsUser(#p0, authentication)")
     public Doctor byUser(@PathVariable Long userId) { return doctors.findByUserId(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Doctor profile not found.")); }
 
     @GetMapping("/{id}/availability")
@@ -79,7 +79,7 @@ public class DoctorController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @authorization.ownsDoctor(#root.args[0], authentication)")
+    @PreAuthorize("hasRole('ADMIN') or @authorization.ownsDoctor(#p0, authentication)")
     public Doctor update(@PathVariable Long id, @RequestBody DoctorRequest request) {
         Doctor doctor = doctors.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Doctor not found."));
         doctor.getUser().setName(request.name());

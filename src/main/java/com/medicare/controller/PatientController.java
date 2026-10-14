@@ -35,7 +35,7 @@ public class PatientController {
     public List<Patient> all() { return patients.findAll(); }
 
     @GetMapping("/by-user/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or @authorization.ownsUser(#root.args[0], authentication)")
+    @PreAuthorize("hasRole('ADMIN') or @authorization.ownsUser(#p0, authentication)")
     public Patient byUser(@PathVariable Long userId) { return patients.findByUserId(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient profile not found.")); }
 
     @GetMapping("/me")
@@ -46,11 +46,11 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @authorization.ownsPatient(#root.args[0], authentication)")
+    @PreAuthorize("hasRole('ADMIN') or @authorization.ownsPatient(#p0, authentication)")
     public Patient one(@PathVariable Long id) { return patients.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found.")); }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @authorization.ownsPatient(#root.args[0], authentication)")
+    @PreAuthorize("hasRole('ADMIN') or @authorization.ownsPatient(#p0, authentication)")
     public Patient update(@PathVariable Long id, @RequestBody Patient request) {
         Patient patient = patients.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found."));
         patient.getUser().setName(request.getUser().getName());

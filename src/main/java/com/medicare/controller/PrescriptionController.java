@@ -22,13 +22,13 @@ public class PrescriptionController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('DOCTOR') and @authorization.isAssignedDoctor(#root.args[0], authentication))")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('DOCTOR') and @authorization.isAssignedDoctor(#p0, authentication))")
     public Prescription get(@PathVariable Long appointmentId) {
         return prescriptions.findByAppointmentId(appointmentId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Consultation not found."));
     }
 
     @PutMapping
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('DOCTOR') and @authorization.isAssignedDoctor(#root.args[0], authentication))")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('DOCTOR') and @authorization.isAssignedDoctor(#p0, authentication))")
     public Prescription save(@PathVariable Long appointmentId, @RequestBody ConsultationRequest request) {
         Appointment appointment = appointments.findById(appointmentId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found."));
         Prescription record = prescriptions.findByAppointmentId(appointmentId).orElseGet(() -> new Prescription(appointment, request.consultationNotes(), request.prescriptionDetails()));
